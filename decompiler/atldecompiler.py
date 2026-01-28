@@ -118,8 +118,21 @@ class ATLDecompiler(DecompilerBase):
 
         # properties
         property_words = WordConcatenator(False)
-        for key, value in ast.properties:
+        for prop in ast.properties:
+            if not prop:
+                continue
+
+            key = prop[0]
+            value = prop[1] if len(prop) > 1 else None
+            warper = prop[2] if len(prop) > 2 else None
+
             property_words.append(key, value)
+
+            if warper is not None:
+                if isinstance(warper, tuple):
+                    property_words.append(*warper)
+                else:
+                    property_words.append(warper)
         words.append(property_words.join())
 
         # with
